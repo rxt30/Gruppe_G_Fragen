@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+    <title>Found Questions</title>
+</head>
+<body>
+
+    <!-- In the first section we present the user the search term, with which he searched-->
+    <h1> Found questions</h1>
+    <p>
+        This was your Search input:
+        <b>"{{question_asked}}"</b>
+    </p>
+
+    <!-- In the second section we present the user three similar questions, that we found.-->
+    <h2>
+        These are the questions that we found for you:
+    </h2>
+    
+    <p>
+        1. Question:
+        <b>"{{question_pr1}}"</b>
+    </p>
+    <p>
+        2. Question:
+        <b>"{{question_pr2}}"</b>
+    </p>
+    <p>
+        3. Question:
+        <b>"{{question_pr3}}"</b>
+    </p>
+
+    <!-- In the last section, the form from the initial page gets repeated, so that the user can make adjustments to his question-->
+    <h1>New or Modified question</h1>
+    <p>
+        If you would like to change the search term, you can insert the new one down here and start another search with
+        a press on the button <b>"Find questions"</b>.
+    </p>
+
+    {% from "_formhelper.html" import render_field %}
+    <form method=post action="/propsed_question">
+        <dl>
+            {{ render_field(form.question_user) }}
+        </dl>
+        <input type=submit value='Find Questions!' name='submit_btn'>
+    </form>
+
+</body>
+</html>

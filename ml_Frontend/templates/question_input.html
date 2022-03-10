@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+    <title>Input Question</title>
+</head>
+<body>
+    <h1>Find similar Questions!</h1>
+    <p>
+        To help you, to find possible solutions to your question, this application can find already asked questions,
+        that are similar to yours. Maybe this can help you.
+    </p>
+    <p>
+        To use it, you just need to write your question in the following text field and hit the Button
+        <b>"Find Questions!"</b>, as soon as you want. If the algorithmen could not find a similar question you can
+        still modify it for the next search or use a different search term.
+    </p>
+
+    <!-- Section in which the defined form _formhelper.html gets first imported and then inserted,
+    as well as a button to submit the question-->
+    {% from "_formhelper.html" import render_field %}
+    <form method=post action="/propsed_question">
+        <dl>
+            {{ render_field(form.question_user) }}
+        </dl>
+        <!--Creating the Button to submit the question to encoding.-->
+        <input type=submit value='Find Questions!' name='submit_btn'>
+    </form>
+</body>
+</html>
