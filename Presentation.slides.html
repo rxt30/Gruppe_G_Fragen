@@ -15226,8 +15226,11 @@ jp-needs-light-background
 <li>Droppen aller Spalten mit NaN-Werten</li>
 <li>Droppen aller Duplikate<br>
 -&gt; Beides trägt nicht zur Verbessserung bei  </li>
-<li>Abspalten der is_duplicate Werte in beiden Datensaätzen in getrennte Variablen  </li>
+<li>Abspalten der is_duplicate Werte in beiden Datensätzen in getrennte Variablen  </li>
 <li>Abspalten von 20% der Trainingsdaten als Validierungsdaten</li>
+<li>Erstellen eines Tokenizers</li>
+<li>Kodierung und Anpassen der Form der Fragen</li>
+<li>Erstellen eines Dicitionaries, das später zum Finden ähnlicher Fragen genutzt wird</li>
 </ol>
 
 </div>
@@ -15240,17 +15243,40 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Modell">Modell<a class="anchor-link" href="#Modell">&#182;</a></h2><ol>
-<li>Erstellen eines Tokenizers</li>
-<li>Kodierung + Anpassen der Form der Fragen</li>
-<li>Erstellen eines Dictionaries, das später zum finden ähnlicher Fragen genutzt wird</li>
-<li>Erstellen des Tatsächlichen Modells<ol>
+<h2 id="Modell">Modell<a class="anchor-link" href="#Modell">&#182;</a></h2><ul>
+<li><p>Modell beinhaltet zwei identisch aufgebaute Untermodelle
+Outputs der Modelle werden im Verlauf zusammengegügt und entsprechend weiterverarbeitet</p>
+</li>
+<li><p>zwei Untermodelle, da zwei unterschiedlichen Fragen 2 Modell-Inputs darstellen
+-&gt; müssen jeweils vorverarbeitet werden</p>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Input-Modell">Input-Modell<a class="anchor-link" href="#Input-Modell">&#182;</a></h2><ol>
 <li>Erstellung eines vorgefertigten GloVe Models für die Embedding Layer
-Dient dazu, um die einzelnen Wort in den Fragen vorzugewichten </li>
-<li></li>
-</ol>
+-&gt; genutzt, um die einzelnen Worte in den Fragen vorzugewichten</li>
+<li><p>Eine der folgenden Möglichkeiten kann durch den Hyperoptimierer ausgewählt werden:</p>
+<ul>
+<li>2 SimpleRNN Layer</li>
+<li>2 LSTM Layer</li>
+<li>2 GRU Layer</li>
+<li>1 bidirektionales LSTM-Layer</li>
+</ul>
+</li>
+<li><p>2 Dense Layer</p>
 </li>
 </ol>
+<p>Output der zweiten Dense Layer kann Ausgabsgrößen von 1-4 besitzen</p>
 
 </div>
 </div>
@@ -15262,26 +15288,18 @@ Dient dazu, um die einzelnen Wort in den Fragen vorzugewichten </li>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Ergebnisse">Ergebnisse<a class="anchor-link" href="#Ergebnisse">&#182;</a></h2>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-     <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
+<h2 id="%22Hauptmodell%22">"Hauptmodell"<a class="anchor-link" href="#%22Hauptmodell%22">&#182;</a></h2><ol>
+<li>erste Layer sind die beiden Inputmodelle</li>
+<li>Mulitply-Layer
+um beide Outputs zusammenzufügen</li>
+<li>Flattenlayer</li>
+<li>2 malige Verarbeitung mittles Kombination aus Dense- und Dropout Layer</li>
+<li>Dense Layer mit der Unit-Größe=1 als Abschluss</li>
+</ol>
 
-     </div>
 </div>
 </div>
 </div>
-
 </div></section></section><section><section>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper">
@@ -15289,7 +15307,67 @@ Dient dazu, um die einzelnen Wort in den Fragen vorzugewichten </li>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Learnings">Learnings<a class="anchor-link" href="#Learnings">&#182;</a></h2>
+<h2 id="Optimierung-des-Modells">Optimierung des Modells<a class="anchor-link" href="#Optimierung-des-Modells">&#182;</a></h2><p>Einsatz des Adam-Optimzers, um das Modell zu optimieren.<br>
+Dafür folgende Optimierungsmöglichkeiten:</p>
+<ul>
+<li>Input-Modell:<ul>
+<li>Einfluss der Gewichte in der Embedding Layer</li>
+<li>Auswahl der </li>
+<li>Entscheidungsvariable zur Anpassung der zwei Dense Layer</li>
+</ul>
+</li>
+<li><p>Haupt-Modell:</p>
+<ul>
+<li>Testen der optimalen Anzahl an Units in den beiden ersten Dense-Layers<ol>
+<li>Umfang von 100-150</li>
+<li>Umfang von 50-100</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p>Wahl der Learning-Rate</p>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Ergebnisse">Ergebnisse<a class="anchor-link" href="#Ergebnisse">&#182;</a></h2><p>-&gt; Woher kommen diese Probleme bei der BEstimmung, ob zwei Fragen verwandt sind?</p>
+
+</div>
+</div>
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Beispiel-1">Beispiel 1<a class="anchor-link" href="#Beispiel-1">&#182;</a></h3><p>$$paar Beispiele, wo es schlecht und gut funktioniert bzw. aus dem Datensatz nehmen(Facebook)</p>
+
+</div>
+</div>
+</div>
+</div></section></section><section><section>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Learnings">Learnings<a class="anchor-link" href="#Learnings">&#182;</a></h2><ul>
+<li>Klassifikation, ob zwei Fragen ausreichend verwandt sind, abhängig vom Blick der Person</li>
+<li>Eventuell stimmt nicht bei allen Trainiungs und Tesfragen, der is_duplicate Wert</li>
+</ul>
+
 </div>
 </div>
 </div>
@@ -15302,6 +15380,7 @@ Dient dazu, um die einzelnen Wort in den Fragen vorzugewichten </li>
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="Ideen-f%C3%BCr-das-n%C3%A4chste-Mal">Ideen f&#252;r das n&#228;chste Mal<a class="anchor-link" href="#Ideen-f%C3%BCr-das-n%C3%A4chste-Mal">&#182;</a></h2><ul>
 <li>Anhand des gewonnen Modells könnte man einen Text-Gen aufbauen, um mit diesem dann ähnliche Fragen zu detektieren.</li>
+<li>Umbau des Models, dass dieses nur zum Training 2 Fragen als Input bekommt, und nach der Trainingsphase nur noch eine</li>
 </ul>
 
 </div>
