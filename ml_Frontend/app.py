@@ -41,13 +41,17 @@ def hello():
         proposed_question1 = foundQuestions[0]
         proposed_question2 = foundQuestions[1]
         proposed_question3 = foundQuestions[2]
+        proposed_question4 = foundQuestions[3]
+        proposed_question5 = foundQuestions[4]
         return render_template(
             'question_proposed.html',
             form=form,
             question_asked=asked_question,
             question_pr1=proposed_question1,
             question_pr2=proposed_question2,
-            question_pr3=proposed_question3)
+            question_pr3=proposed_question3,
+            question_pr4=proposed_question4,
+            question_pr5=proposed_question5)
     return render_template('question_input.html', form=form)
 
 if __name__ == '__main__' :
