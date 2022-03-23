@@ -54,13 +54,16 @@ def hello():
             question_pr5=proposed_question5)
     return render_template('question_input.html', form=form)
 
-if __name__ == '__main__' :
+def runServer():
     # Read model
-    model = tf.keras.models.load_model('../models/kaggle.h5')
+    model = tf.keras.models.load_model('models/questions.h5')
     # Read the tokenizer
-    with open('../models/tokenizer.json') as f:
+    with open('models/tokenizer.json') as f:
         data = json.load(f)
         tokenizer = tf.keras.preprocessing.text.tokenizer_from_json(data)
     # Read the whole question catalog
-    completeQuestionsDict = np.load('../models/questions.npy')
+    completeQuestionsDict = np.load('models/questions.npy')
     app.run(debug=True, use_reloader=False)
+
+if __name__ == '__main__' :
+    runServer()
